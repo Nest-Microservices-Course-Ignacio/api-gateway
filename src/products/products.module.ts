@@ -18,6 +18,5 @@ import { envs } from 'src/config/envs';
     ]),
   ],
   controllers: [ProductsController],
-  providers: [],
 })
 export class ProductsModule {}

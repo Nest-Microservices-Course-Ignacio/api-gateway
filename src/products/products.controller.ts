@@ -1,13 +1,17 @@
-import { Controller, Patch } from '@nestjs/common';
+import { Controller, Inject, Patch } from '@nestjs/common';
 import { Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { Services } from 'src/config/services';
 
 @Controller('products')
 export class ProductsController {
-  constructor() {}
+  constructor(
+    @Inject(Services.PRODUCTS_SERVICE) private productsClient: ClientProxy,
+  ) {}
 
   @Get()
   getAllProducts() {
-    return 'This action returns all products';
+    return this.productsClient.send({ cmd: 'find_all_products' }, {});
   }
 
   @Get(':id')

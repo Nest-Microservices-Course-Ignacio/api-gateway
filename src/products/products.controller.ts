@@ -1,7 +1,11 @@
-import { Controller, Inject, Patch } from '@nestjs/common';
+import { Controller, Inject, Patch, Query } from '@nestjs/common';
 import { Get, Post, Delete, Param, Body } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { ProductsCommands } from 'src/common/cmd/products.cmd';
+import { ActiveRecordsDto } from 'src/common/dto/activeRecords.dto';
 import { Services } from 'src/config/services';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -10,27 +14,46 @@ export class ProductsController {
   ) {}
 
   @Get()
-  getAllProducts() {
-    return this.productsClient.send({ cmd: 'find_all_products' }, {});
+  getAllProducts(@Query() pagination: ActiveRecordsDto) {
+    return this.productsClient.send(
+      { cmd: ProductsCommands.FIND_ALL_PRODUCTS },
+      pagination,
+    );
   }
 
   @Get(':id')
   getProductById(@Param('id') id: string) {
-    return `This action returns the product with id: ${id}`;
+    return this.productsClient.send(
+      { cmd: ProductsCommands.FIND_ONE_PRODUCT },
+      { id },
+    );
   }
 
   @Post()
-  createProduct(@Body() createProductDto: any) {
-    return `This action creates a new product with the following data: ${JSON.stringify(createProductDto)}`;
+  createProduct(@Body() createProductDto: CreateProductDto) {
+    return this.productsClient.send(
+      { cmd: ProductsCommands.CREATE_PRODUCT },
+      createProductDto,
+    );
   }
 
   @Patch(':id')
-  updateProduct(@Param('id') id: string, @Body() updateProductDto: any) {
-    return `This action updates the product with id: ${id} with the following data: ${JSON.stringify(updateProductDto)}`;
+  updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+
+    return this.productsClient.send(
+      { cmd: ProductsCommands.UPDATE_PRODUCT },
+      { id: +id, ...updateProductDto },
+    );
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string) {
-    return `This action deletes the product with id: ${id}`;
+  deleteProduct(@Param('id') id: number) {
+    return this.productsClient.send(
+      { cmd: ProductsCommands.DELETE_PRODUCT },
+      { id },
+    );
   }
 }

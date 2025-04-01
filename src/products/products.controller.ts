@@ -1,12 +1,11 @@
-import { Controller, Inject, Logger, Patch, Query } from '@nestjs/common';
-import { Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { catchError, firstValueFrom } from 'rxjs';
 import { ProductsCommands } from 'src/common/cmd/products.cmd';
 import { ActiveRecordsDto } from 'src/common/dto/activeRecords.dto';
 import { Services } from 'src/config/services';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { catchError, firstValueFrom } from 'rxjs';
 
 @Controller('products')
 export class ProductsController {
@@ -63,7 +62,7 @@ export class ProductsController {
       .send({ cmd: ProductsCommands.DELETE_PRODUCT }, { id })
       .pipe(
         /* This implementation is for Observables */
-        catchError((err) => {
+        catchError((err: Error | Record<string, unknown>) => {
           throw new RpcException(err);
         }),
       );

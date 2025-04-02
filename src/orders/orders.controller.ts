@@ -10,14 +10,15 @@ import {
 
 import { ClientProxy } from '@nestjs/microservices';
 import { OrdersCommands } from 'src/common/cmd/orders.cmd';
-import { Services } from 'src/config/services';
+
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { ORDERS_SERVICE } from 'src/config/services';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
-    @Inject(Services.ORDERS_SERVICE) private orderClient: ClientProxy,
+    @Inject(ORDERS_SERVICE) private orderClient: ClientProxy,
   ) {}
 
   @Post()

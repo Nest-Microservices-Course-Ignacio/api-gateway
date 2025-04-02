@@ -1,17 +1,26 @@
-import { Body, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Logger,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
 import { ProductsCommands } from 'src/common/cmd/products.cmd';
 import { ActiveRecordsDto } from 'src/common/dto/activeRecords.dto';
-import { Services } from 'src/config/services';
+import { PRODUCTS_SERVICE } from 'src/config/services';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(
-    @Inject(Services.PRODUCTS_SERVICE) private productsClient: ClientProxy,
-  ) {}
+  constructor(@Inject(PRODUCTS_SERVICE) private productsClient: ClientProxy) {}
 
   @Get()
   getAllProducts(@Query() pagination: ActiveRecordsDto) {

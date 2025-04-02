@@ -18,7 +18,6 @@ import { firstValueFrom } from 'rxjs';
 import { ORDERS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { StatusDto } from './dto/status.dto';
 
@@ -68,10 +67,13 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  changeOrder(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() statusDto: StatusDto,
+  ) {
     return this.orderClient.send(
       { cmd: OrdersCommands.CHANGE_ORDER_STATUS },
-      { id, updateOrderDto },
+      { id, status: statusDto.status },
     );
   }
 }

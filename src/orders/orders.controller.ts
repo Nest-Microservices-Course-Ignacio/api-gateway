@@ -17,9 +17,7 @@ import { ORDERS_SERVICE } from 'src/config/services';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(
-    @Inject(ORDERS_SERVICE) private orderClient: ClientProxy,
-  ) {}
+  constructor(@Inject(ORDERS_SERVICE) private orderClient: ClientProxy) {}
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
@@ -43,7 +41,7 @@ export class OrdersController {
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderClient.send(
       { cmd: OrdersCommands.CHANGE_ORDER_STATUS },
-      { id },
+      { id, updateOrderDto },
     );
   }
 }

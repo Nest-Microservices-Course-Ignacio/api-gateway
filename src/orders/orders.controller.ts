@@ -61,7 +61,6 @@ export class OrdersController {
     @Param('status') status: OrderStatus,
     @Query() paginationDto: PaginationDto,
   ) {
-    console.log({ status, ...paginationDto });
     return this.orderClient.send(
       { cmd: OrdersCommands.FIND_BY_STATUS },
       { status, ...paginationDto },

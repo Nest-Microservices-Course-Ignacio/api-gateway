@@ -1,14 +1,14 @@
 import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Inject,
-  Logger,
-  Param,
-  Patch,
-  Post,
-  Query,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Logger,
+    Param,
+    Patch,
+    Post,
+    Query,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -42,6 +42,7 @@ export class ProductsController {
       return product;
     } catch (error) {
       Logger.error('Error fetching product by ID', this.constructor.name);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new RpcException(error);
     }
   }

@@ -14,11 +14,11 @@ import {
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { OrdersCommands } from 'src/common/cmd/orders.cmd';
 
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { ORDERS_SERVICE } from 'src/config/services';
 import { firstValueFrom } from 'rxjs';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { ORDERS_SERVICE } from 'src/config/services';
+import { CreateOrderDto } from './dto/create-order.dto';
+import { OrderPaginationDto } from './dto/order-pagination.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -33,10 +33,10 @@ export class OrdersController {
   }
 
   @Get()
-  findAll(@Query() pagination: PaginationDto) {
+  findAll(@Query() orderPagination: OrderPaginationDto) {
     return this.orderClient.send(
       { cmd: OrdersCommands.FIND_ALL_ORDERS },
-      pagination,
+      orderPagination,
     );
   }
 
@@ -49,6 +49,7 @@ export class OrdersController {
       return order;
     } catch (error) {
       Logger.error('Error fetching order by ID', this.constructor.name);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new RpcException(error);
     }
   }

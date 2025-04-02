@@ -19,6 +19,8 @@ import { ORDERS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { OrderStatus } from './enum/orderStatus.enum';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -40,7 +42,7 @@ export class OrdersController {
     );
   }
 
-  @Get(':id')
+  @Get('id/:id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const order = await firstValueFrom<{ id: string }>(
@@ -52,6 +54,18 @@ export class OrdersController {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       throw new RpcException(error);
     }
+  }
+
+  @Get(':status')
+  findByOrderStatus(
+    @Param('status') status: OrderStatus,
+    @Query() paginationDto: PaginationDto,
+  ) {
+    console.log({ status, ...paginationDto });
+    return this.orderClient.send(
+      { cmd: OrdersCommands.FIND_BY_STATUS },
+      { status, ...paginationDto },
+    );
   }
 
   @Patch(':id')

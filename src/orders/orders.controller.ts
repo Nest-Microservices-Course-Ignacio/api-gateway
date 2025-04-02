@@ -5,6 +5,7 @@ import {
   Inject,
   Logger,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -40,7 +41,7 @@ export class OrdersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const order = await firstValueFrom<{ id: string }>(
         this.orderClient.send({ cmd: OrdersCommands.FIND_ONE_ORDER }, id),

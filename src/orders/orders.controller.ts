@@ -19,8 +19,8 @@ import { ORDERS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { OrderStatus } from './enum/orderStatus.enum';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { StatusDto } from './dto/status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -58,12 +58,12 @@ export class OrdersController {
 
   @Get(':status')
   findByOrderStatus(
-    @Param('status') status: OrderStatus,
+    @Param() statusDto: StatusDto,
     @Query() paginationDto: PaginationDto,
   ) {
     return this.orderClient.send(
       { cmd: OrdersCommands.FIND_BY_STATUS },
-      { status, ...paginationDto },
+      { status: statusDto.status, ...paginationDto },
     );
   }
 

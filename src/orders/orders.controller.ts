@@ -15,10 +15,10 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { OrdersCommands } from 'src/common/cmd/orders.cmd';
 
 import { firstValueFrom } from 'rxjs';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { ORDERS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { StatusDto } from './dto/status.dto';
 
 @Controller('orders')

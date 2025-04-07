@@ -12,6 +12,7 @@ import { NATS_SERVICE } from 'src/config/services';
         transport: Transport.NATS,
         options: {
           servers: envs.natsServers,
+          reconnect: true,
         },
       },
     ]),

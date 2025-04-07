@@ -16,18 +16,18 @@ import { OrdersCommands } from 'src/common/cmd/orders.cmd';
 
 import { firstValueFrom } from 'rxjs';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
-import { ORDERS_SERVICE } from 'src/config/services';
+import { NATS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { StatusDto } from './dto/status.dto';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(@Inject(ORDERS_SERVICE) private orderClient: ClientProxy) {}
+  constructor(@Inject(NATS_SERVICE) private client: ClientProxy) {}
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {
-    return this.orderClient.send(
+    return this.client.send(
       { cmd: OrdersCommands.CREATE_ORDER },
       createOrderDto,
     );
@@ -35,7 +35,7 @@ export class OrdersController {
 
   @Get()
   findAll(@Query() orderPagination: OrderPaginationDto) {
-    return this.orderClient.send(
+    return this.client.send(
       { cmd: OrdersCommands.FIND_ALL_ORDERS },
       orderPagination,
     );
@@ -45,7 +45,7 @@ export class OrdersController {
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const order = await firstValueFrom<{ id: string }>(
-        this.orderClient.send({ cmd: OrdersCommands.FIND_ONE_ORDER }, id),
+        this.client.send({ cmd: OrdersCommands.FIND_ONE_ORDER }, id),
       );
       return order;
     } catch (error) {
@@ -60,7 +60,7 @@ export class OrdersController {
     @Param() statusDto: StatusDto,
     @Query() paginationDto: PaginationDto,
   ) {
-    return this.orderClient.send(
+    return this.client.send(
       { cmd: OrdersCommands.FIND_BY_STATUS },
       { status: statusDto.status, ...paginationDto },
     );
@@ -71,7 +71,7 @@ export class OrdersController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() statusDto: StatusDto,
   ) {
-    return this.orderClient.send(
+    return this.client.send(
       { cmd: OrdersCommands.CHANGE_ORDER_STATUS },
       { id, status: statusDto.status },
     );

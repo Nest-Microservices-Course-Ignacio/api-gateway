@@ -26,5 +26,6 @@ async function bootstrap() {
     `Server is running on: http://localhost:${envs.port}/api`,
     'API-GATEWAY',
   );
+  
 }
 bootstrap();

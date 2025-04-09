@@ -5,6 +5,7 @@ import { RpcCustomExceptionFilter } from './common/exceptions/rcp-exception.filt
 import { envs } from './config/envs';
 
 async function bootstrap() {
+  console.log('Starting API Gateway...');
   const app = await NestFactory.create(AppModule);
 
 

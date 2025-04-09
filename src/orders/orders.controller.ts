@@ -35,10 +35,15 @@ export class OrdersController {
 
   @Get()
   findAll(@Query() orderPagination: OrderPaginationDto) {
-    return this.client.send(
-      { cmd: OrdersCommands.FIND_ALL_ORDERS },
-      orderPagination,
-    );
+    try {
+      return this.client.send(
+        { cmd: OrdersCommands.FIND_ALL_ORDERS },
+        orderPagination,
+      );
+    } catch (error) {
+      Logger.error('Error fetching all orders', this.constructor.name);
+      throw new RpcException(error);
+    }
   }
 
   @Get('id/:id')

@@ -1,27 +1,39 @@
-import { Catch, ArgumentsHost, ExceptionFilter } from '@nestjs/common';
-
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
+import { Response } from 'express';
+import { RpcErrorResponse } from './rpc-custom-exception';
 
 @Catch(RpcException)
 export class RpcCustomExceptionFilter implements ExceptionFilter {
   catch(exception: RpcException, host: ArgumentsHost) {
+    let message = 'Internal server error';
     const ctx = host.switchToHttp();
-    const response: { status: (code: number) => { json: (body: any) => void } } = ctx.getResponse();
+    const response = ctx.getResponse<Response>();
+    const rpcError = exception.getError();
 
-    const rpcError = exception.getError() as { status?: number; message?: string };
-
-    if (
-      typeof rpcError === 'object' &&
-      rpcError.status !== undefined &&
-      rpcError.message !== undefined
-    ) {
-      const status = typeof rpcError.status === 'number' && !isNaN(rpcError.status) ? rpcError.status : 400;
-      return response.status(status).json(rpcError);
+    if (typeof rpcError === 'string' && rpcError.includes('Empty response')) {
+      message = 'Empty Response';
     }
 
-    response.status(400).json({
+    // Check if the error has the expected structure
+    if (
+      typeof rpcError === 'object' &&
+      rpcError !== null &&
+      'status' in rpcError &&
+      'message' in rpcError
+    ) {
+      const errorResponse = rpcError as RpcErrorResponse;
+      const status = isNaN(+errorResponse.status)
+        ? 400
+        : Number(errorResponse.status);
+
+      return response.status(status).json(errorResponse);
+    }
+
+    // Default error response for unexpected error formats
+    return response.status(400).json({
       status: 400,
-      message: rpcError,
+      message: typeof rpcError === 'string' ? rpcError : message,
     });
   }
 }

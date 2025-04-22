@@ -24,7 +24,7 @@ const envVarsSchema = joi
 
 const result = envVarsSchema.validate({
   ...process.env,
-  NATS_SERVERS: process.env.NATS_SERVERS!.split(','),
+  NATS_SERVERS: process.env.NATS_SERVERS.split(','),
 });
 const { error, value } = result as {
   error?: joi.ValidationError;

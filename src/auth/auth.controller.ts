@@ -1,9 +1,10 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { AuthCommands } from 'src/common/cmd/auth.cmd';
 import { NATS_SERVICE } from 'src/config/services';
-import { RegisterDTO } from './dto/register.dto';
 import { LoginUserDTO } from './dto/loginUser.dto';
+import { RegisterDTO } from './dto/register.dto';
+import { catchError, throwError } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
@@ -11,16 +12,22 @@ export class AuthController {
 
   @Post('register')
   setRegisterUser(@Body() data: RegisterDTO) {
-    return this.client.send({ cmd: AuthCommands.AUTH_REGISTER_USER }, data);
+    return this.client
+      .send({ cmd: AuthCommands.AUTH_REGISTER_USER }, data)
+      .pipe(catchError((error) => throwError(() => new RpcException(error))));
   }
 
   @Post('login')
   setLoginUser(@Body() data: LoginUserDTO) {
-    return this.client.send({ cmd: AuthCommands.AUTH_LOGIN_USER }, data);
+    return this.client
+      .send({ cmd: AuthCommands.AUTH_LOGIN_USER }, data)
+      .pipe(catchError((error) => throwError(() => new RpcException(error))));
   }
 
   @Post('verify')
   verifyUser(@Body() data: any) {
-    return this.client.send({ cmd: AuthCommands.AUTH_VERIFY_USER }, data);
+    return this.client
+      .send({ cmd: AuthCommands.AUTH_VERIFY_USER }, data)
+      .pipe(catchError((error) => throwError(() => new RpcException(error))));
   }
 }

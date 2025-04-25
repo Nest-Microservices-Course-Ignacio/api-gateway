@@ -1,13 +1,16 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { RpcCustomExceptionFilter } from './common/exceptions/rcp-exception.filter';
+
 import { envs } from './config/envs';
+import { RpcCustomExceptionFilter } from './common/exceptions/rcp-exception.filter';
+
 
 async function bootstrap() {
   console.log('Starting API Gateway...');
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalFilters(new RpcCustomExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,8 +20,6 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalFilters(new RpcCustomExceptionFilter());
-
   app.setGlobalPrefix('/api');
 
   await app.listen(envs.port);
@@ -27,6 +28,5 @@ async function bootstrap() {
     `Server is running on: http://localhost:${envs.port}/api`,
     'API-GATEWAY',
   );
-  
 }
 bootstrap();

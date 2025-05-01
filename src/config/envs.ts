@@ -8,7 +8,6 @@ interface EnvVars {
   ORDERS_MICROSERVICE_HOST: string;
   ORDERS_MICROSERVICE_PORT: number;
   NATS_SERVERS: string[];
-  JWT_CONSTANT: string;
 }
 
 const envVarsSchema = joi
@@ -19,7 +18,6 @@ const envVarsSchema = joi
     ORDERS_MICROSERVICE_HOST: joi.string().required(),
     ORDERS_MICROSERVICE_PORT: joi.number().required(),
     NATS_SERVERS: joi.array().items(joi.string()).required(),
-    JWT_CONSTANT: joi.string().required(),
   })
   .unknown(true)
   .required();
@@ -44,5 +42,4 @@ export const envs = {
   ordersMicroserviceHost: envVars.ORDERS_MICROSERVICE_HOST,
   ordersMicroservicePort: envVars.ORDERS_MICROSERVICE_PORT,
   natsServers: envVars.NATS_SERVERS,
-  jwtConst: envVars.JWT_CONSTANT,
 };

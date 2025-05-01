@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { ClientProxy, RpcException } from '@nestjs/microservices';
@@ -20,7 +21,9 @@ import { NATS_SERVICE } from 'src/config/services';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderPaginationDto } from './dto/order-pagination.dto';
 import { StatusDto } from './dto/status.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('orders')
 export class OrdersController {
   constructor(@Inject(NATS_SERVICE) private client: ClientProxy) {}

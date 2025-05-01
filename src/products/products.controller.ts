@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -17,11 +18,14 @@ import { ActiveRecordsDto } from 'src/common/dto/activeRecords.dto';
 import { NATS_SERVICE } from 'src/config/services';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(@Inject(NATS_SERVICE) private client: ClientProxy) {}
 
+  
   @Get()
   getAllProducts(@Query() pagination: ActiveRecordsDto) {
     return this.client.send(
@@ -30,14 +34,12 @@ export class ProductsController {
     );
   }
 
+  
   @Get(':id')
   async getProductById(@Param('id') id: string) {
     try {
       const product = await firstValueFrom<{ id: string }>(
-        this.client.send(
-          { cmd: ProductsCommands.FIND_ONE_PRODUCT },
-          { id },
-        ),
+        this.client.send({ cmd: ProductsCommands.FIND_ONE_PRODUCT }, { id }),
       );
       return product;
     } catch (error) {
@@ -77,5 +79,4 @@ export class ProductsController {
         }),
       );
   }
-  
 }

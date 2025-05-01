@@ -5,6 +5,7 @@ import { NATS_SERVICE } from 'src/config/services';
 import { LoginUserDTO } from './dto/loginUser.dto';
 import { RegisterDTO } from './dto/register.dto';
 import { catchError, throwError } from 'rxjs';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +18,7 @@ export class AuthController {
       .pipe(catchError((error) => throwError(() => new RpcException(error))));
   }
 
+  @Public()
   @Post('login')
   setLoginUser(@Body() data: LoginUserDTO) {
     return this.client
@@ -24,6 +26,7 @@ export class AuthController {
       .pipe(catchError((error) => throwError(() => new RpcException(error))));
   }
 
+  @Public()
   @Post('verify')
   verifyUser(@Body() data: any) {
     return this.client

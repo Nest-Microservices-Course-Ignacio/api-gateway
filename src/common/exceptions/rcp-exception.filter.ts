@@ -10,7 +10,7 @@ export class RpcCustomExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const status = Number(error.status);
+    const status = isNaN(+error.status) ? 400 : +error.status;
 
     response.status(status).json(error);
   }
